@@ -1,0 +1,25 @@
+[package]
+name = "codegen-rust"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Generates Rust structs/components from schema-ir"
+
+[lib]
+name = "codegen_rust"
+path = "src/lib.rs"
+
+[dependencies]
+schema-ir = { path = "../schema-ir" }
+serde.workspace = true
+tera.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+insta.workspace = true
+
+# テンプレートファイル(*.tera)は実行時ではなくビルド後の配布物に
+# 同梱する想定。include_str!で埋め込むか、実行時ディレクトリ参照かは
+# ADRで別途決定する。

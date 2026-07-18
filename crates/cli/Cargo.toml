@@ -1,0 +1,19 @@
+[package]
+name = "schema-codegen-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CLI entry point: schema-ir -> codegen-rust / codegen-cxx"
+
+[[bin]]
+name = "schema-codegen"
+path = "src/main.rs"
+
+[dependencies]
+schema-ir = { path = "../schema-ir" }
+codegen-rust = { path = "../codegen-rust" }
+codegen-cxx = { path = "../codegen-cxx" }
+clap.workspace = true
+anyhow.workspace = true
+serde_json.workspace = true

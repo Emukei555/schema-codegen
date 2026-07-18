@@ -1,0 +1,30 @@
+[project]
+name = "schema-tools"
+version = "0.1.0"
+description = "Prototyping, schema validation, and build orchestration helpers for schema-codegen"
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT OR Apache-2.0" }
+dependencies = []
+
+# 用途を3つに限定(スキーマ検証プロトタイプ / IRデバッグ可視化 / ビルドオーケストレーション)。
+# GUIやWebフレームワーク系の依存はスコープ外として意図的に入れていない。
+[project.optional-dependencies]
+dev = [
+    "nox>=2024.4.15",   # クロスプラットフォームなタスクランナー(.bat後継)
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["schema_tools"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

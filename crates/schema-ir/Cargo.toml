@@ -1,0 +1,20 @@
+[package]
+name = "schema-ir"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Parses .fbs schemas + custom annotations into a language-agnostic IR"
+
+[lib]
+name = "schema_ir"
+path = "src/lib.rs"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+flatbuffers.workspace = true
+
+[dev-dependencies]
+insta.workspace = true

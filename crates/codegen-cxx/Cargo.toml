@@ -1,0 +1,21 @@
+[package]
+name = "codegen-cxx"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Generates C++ headers / cxx bridge definitions from schema-ir"
+
+[lib]
+name = "codegen_cxx"
+path = "src/lib.rs"
+
+[dependencies]
+schema-ir = { path = "../schema-ir" }
+serde.workspace = true
+tera.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+insta.workspace = true

@@ -1,0 +1,26 @@
+# --- Rust ---
+/target/
+**/target/
+Cargo.lock
+# ライブラリ的に配布する場合はCargo.lockをコミットしないのが慣例。
+# 本体プロジェクト側から git依存で参照するだけならこの方針でOK。
+# 単体で実行バイナリとしても配布したい場合は要再検討。
+
+# --- Python ---
+python/.venv/
+python/**/__pycache__/
+python/.pytest_cache/
+python/.nox/
+python/*.egg-info/
+python/dist/
+python/build/
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.zed/
+.DS_Store
+Thumbs.db
+
+# --- 生成物(このツール自体が吐き出すコード) ---
+/generated/
