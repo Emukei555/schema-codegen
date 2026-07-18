@@ -1,31 +1,29 @@
 # schema-codegen
 
-FlatBuffersスキーマ(`.fbs`)を単一の起点(Single Source of Truth)として、
-Rust構造体(ECS Component等)とC++ヘッダ / cxxブリッジ定義を自動生成するツール。
+A code generation tool that utilizes FlatBuffers schemas (`.fbs`) as the Single Source of Truth (SSoT) to automatically generate Rust structures (such as ECS Components), C++ headers, and `cxx` bridge definitions.
 
-`Engine-Agnostic-Rust-Template` 本体プロジェクトから独立させ、
-将来的に他のシステムプロジェクトからも再利用できることを意図している。
+This project is decoupled from the main `Engine-Agnostic-Rust-Template` repository to ensure reusability across other future system-level projects.
 
-## 構成
+## Architecture
 
-- `crates/schema-ir` — `.fbs` + 独自アノテーションをパースし、言語非依存の中間表現(IR)に変換
-- `crates/codegen-rust` — IR → Rust構造体を生成
-- `crates/codegen-cxx` — IR → C++ヘッダ / cxxブリッジ定義を生成
-- `crates/cli` — 上記を束ねる実行バイナリ
-- `python/` — スキーマ検証のプロトタイピング、IRのデバッグ可視化、ビルドオーケストレーション(nox)
+- `crates/schema-ir` — Parses `.fbs` files and custom annotations, converting them into a language-agnostic Intermediate Representation (IR).
+- `crates/codegen-rust` — Generates Rust structures from the IR.
+- `crates/codegen-cxx` — Generates C++ headers and `cxx` bridge definitions from the IR.
+- `crates/cli` — An executable binary that orchestrates the sub-crates listed above.
+- `python/` — Handles schema validation prototyping, IR debug visualization, and build orchestration (via `nox`).
 
-## 現状
+## Current Status
 
-ビルドシステムの設定のみ。実装は未着手(すべてのcrateはplaceholder)。
+Only the build system configurations have been established. Implementation has not yet begun (all crates currently serve as placeholders).
 
-## 本体プロジェクトからの参照方法(想定)
+## Expected Consumption by the Main Project
 
 ```toml
 [dependencies]
 schema-codegen-cli = { git = "https://github.com/you/schema-codegen", tag = "v0.1.0" }
 ```
 
-開発中はローカルpathへ一時的に差し替える:
+For active local development, temporarily override the dependency path as follows:
 
 ```toml
 [patch."https://github.com/you/schema-codegen"]
