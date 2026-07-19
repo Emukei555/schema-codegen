@@ -9,4 +9,8 @@ field = { ident ~ ":" ~ primitive_type ~ ";" }
 
 table_def = { "table" ~ ident ~ "{" ~ field* ~ "}" }
 
-file = { SOI ~ table_def ~ EOI }
+enum_variant = { ident }
+enum_variants = { enum_variant ~ ("," ~ enum_variant)* ~ ","? }
+enum_def = { "enum" ~ ident ~ ":" ~ primitive_type ~ "{" ~ enum_variants ~ "}" }
+
+file = { SOI ~ (table_def | enum_def)* ~ EOI }
