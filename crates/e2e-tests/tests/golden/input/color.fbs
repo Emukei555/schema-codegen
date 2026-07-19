@@ -1,0 +1,15 @@
+enum Color : byte {
+    Red,
+    Green,
+    Blue
+}
+
+enum Status: byte {
+    Active,
+    Inactive
+}
+
+table ColoredItem {
+    name: string;
+    color: Color;
+}

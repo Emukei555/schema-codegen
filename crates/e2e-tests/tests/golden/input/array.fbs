@@ -1,0 +1,4 @@
+// 例:
+table Inventory {
+    item_ids: [int];
+}

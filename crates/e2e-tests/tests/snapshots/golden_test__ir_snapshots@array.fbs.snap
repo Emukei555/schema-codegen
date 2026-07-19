@@ -1,0 +1,26 @@
+---
+source: crates/e2e-tests/tests/golden_test.rs
+expression: result
+input_file: crates/e2e-tests/tests/golden/input/array.fbs
+---
+Schema {
+    objects: [
+        ObjectDef {
+            name: "Inventory",
+            fields: [
+                Field {
+                    name: "item_ids",
+                    field_type: Vector(
+                        Primitive(
+                            Int,
+                        ),
+                    ),
+                    attributes: [],
+                },
+            ],
+            is_struct: false,
+            attributes: [],
+        },
+    ],
+    enums: [],
+}

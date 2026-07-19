@@ -1,0 +1,45 @@
+---
+source: crates/e2e-tests/tests/golden_test.rs
+expression: result
+input_file: crates/e2e-tests/tests/golden/input/player.fbs
+---
+Schema {
+    objects: [
+        ObjectDef {
+            name: "Player",
+            fields: [
+                Field {
+                    name: "x",
+                    field_type: Primitive(
+                        Float,
+                    ),
+                    attributes: [],
+                },
+                Field {
+                    name: "y",
+                    field_type: Primitive(
+                        Float,
+                    ),
+                    attributes: [],
+                },
+                Field {
+                    name: "is_active",
+                    field_type: Primitive(
+                        Bool,
+                    ),
+                    attributes: [],
+                },
+                Field {
+                    name: "name",
+                    field_type: Primitive(
+                        String,
+                    ),
+                    attributes: [],
+                },
+            ],
+            is_struct: false,
+            attributes: [],
+        },
+    ],
+    enums: [],
+}
