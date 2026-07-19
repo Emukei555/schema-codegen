@@ -6,9 +6,6 @@ use pest_derive::Parser;
 #[grammar = "grammar.pest"]
 pub struct FbsParser;
 
-// ==========================================
-// 新規追加: 型解析専用の再帰関数
-// ==========================================
 fn parse_type(pair: pest::iterators::Pair<Rule>) -> TypeRef {
     match pair.as_rule() {
         Rule::primitive_type => {
@@ -24,7 +21,6 @@ fn parse_type(pair: pest::iterators::Pair<Rule>) -> TypeRef {
         }
         Rule::custom_type => TypeRef::Obj(pair.as_str().to_string()),
         Rule::vector_type => {
-            // [ ] の中身を取り出して再帰的にパースし、Boxに包む
             let inner_pair = pair.into_inner().next().unwrap();
             TypeRef::Vector(Box::new(parse_type(inner_pair)))
         }
@@ -32,9 +28,6 @@ fn parse_type(pair: pest::iterators::Pair<Rule>) -> TypeRef {
     }
 }
 
-// ==========================================
-// メインのパース関数
-// ==========================================
 pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
     let mut file_pairs = FbsParser::parse(Rule::file, input)?;
     let file_inner = file_pairs.next().unwrap().into_inner();
@@ -106,7 +99,7 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
                     attributes: Vec::new(),
                 });
             }
-            _ => {} // EOI などは無視
+            _ => {}
         }
     }
 

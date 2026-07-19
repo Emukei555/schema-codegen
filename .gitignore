@@ -2,9 +2,8 @@
 /target/
 **/target/
 # Cargo.lock
-# ライブラリ的に配布する場合はCargo.lockをコミットしないのが慣例。
-# 本体プロジェクト側から git依存で参照するだけならこの方針でOK。
-# 単体で実行バイナリとしても配布したい場合は要再検討。
+# Still considering whether to distribute it as a standalone executable binary
+# Currently intended as a library
 
 # --- Python ---
 python/.venv/
