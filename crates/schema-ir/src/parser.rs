@@ -91,14 +91,12 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
 
                 let variants_pair = inner.next().unwrap();
                 let mut variants = Vec::new();
-                let mut current_value: i64 = 0;
 
-                for variant in variants_pair.into_inner() {
+                for (current_value, variant) in (0_i64..).zip(variants_pair.into_inner()) {
                     variants.push(EnumVal {
                         name: variant.as_str().to_string(),
                         value: current_value,
                     });
-                    current_value += 1;
                 }
 
                 parsed_enums.push(EnumDef {
