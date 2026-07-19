@@ -1,0 +1,7 @@
+// プレイヤーの座標情報
+table Player {
+    x: float;
+    y: float;
+    is_active: bool; // フラグ
+    name: string;
+}

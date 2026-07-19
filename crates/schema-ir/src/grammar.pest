@@ -1,0 +1,12 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+COMMENT    = _{ "//" ~ (!NEWLINE ~ ANY)* }
+
+ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+
+primitive_type = { "float" | "int" | "bool" | "string" }
+
+field = { ident ~ ":" ~ primitive_type ~ ";" }
+
+table_def = { "table" ~ ident ~ "{" ~ field* ~ "}" }
+
+file = { SOI ~ table_def ~ EOI }

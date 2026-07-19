@@ -1,0 +1,30 @@
+---
+source: crates/e2e-tests/tests/golden_test.rs
+expression: result
+input_file: crates/e2e-tests/tests/golden/input/player.fbs
+---
+Schema {
+    tables: [
+        Table {
+            name: "Player",
+            fields: [
+                Field {
+                    name: "x",
+                    field_type: Float,
+                },
+                Field {
+                    name: "y",
+                    field_type: Float,
+                },
+                Field {
+                    name: "is_active",
+                    field_type: Bool,
+                },
+                Field {
+                    name: "name",
+                    field_type: String,
+                },
+            ],
+        },
+    ],
+}
