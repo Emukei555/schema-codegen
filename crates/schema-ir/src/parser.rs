@@ -1,4 +1,4 @@
-use crate::{Field, PrimitiveType, Schema, Table};
+use crate::{EnumDef, EnumVal, Field, ObjectDef, PrimitiveType, Schema, TypeRef};
 use pest::Parser;
 use pest_derive::Parser;
 
@@ -6,50 +6,114 @@ use pest_derive::Parser;
 #[grammar = "grammar.pest"]
 pub struct FbsParser;
 
+// ==========================================
+// 新規追加: 型解析専用の再帰関数
+// ==========================================
+fn parse_type(pair: pest::iterators::Pair<Rule>) -> TypeRef {
+    match pair.as_rule() {
+        Rule::primitive_type => {
+            let prim = match pair.as_str() {
+                "float" => PrimitiveType::Float,
+                "int" => PrimitiveType::Int,
+                "bool" => PrimitiveType::Bool,
+                "string" => PrimitiveType::String,
+                "byte" => PrimitiveType::Byte,
+                _ => unreachable!("Grammar prevents this"),
+            };
+            TypeRef::Primitive(prim)
+        }
+        Rule::custom_type => TypeRef::Obj(pair.as_str().to_string()),
+        Rule::vector_type => {
+            // [ ] の中身を取り出して再帰的にパースし、Boxに包む
+            let inner_pair = pair.into_inner().next().unwrap();
+            TypeRef::Vector(Box::new(parse_type(inner_pair)))
+        }
+        _ => unreachable!("Grammar prevents this"),
+    }
+}
+
+// ==========================================
+// メインのパース関数
+// ==========================================
 pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
-    // fileルールを起点にパース開始
     let mut file_pairs = FbsParser::parse(Rule::file, input)?;
     let file_inner = file_pairs.next().unwrap().into_inner();
 
-    let mut parsed_tables = Vec::new();
+    let mut parsed_objects = Vec::new();
+    let mut parsed_enums = Vec::new();
 
     for record in file_inner {
-        // MVP0では table_def が1つだけ来る想定
-        if let Rule::table_def = record.as_rule() {
-            let mut inner = record.into_inner();
+        match record.as_rule() {
+            Rule::table_def => {
+                let mut inner = record.into_inner();
+                let table_name = inner.next().unwrap().as_str().to_string();
+                let mut fields = Vec::new();
 
-            let table_name = inner.next().unwrap().as_str().to_string();
-            let mut fields = Vec::new();
+                for field_pair in inner {
+                    if let Rule::field = field_pair.as_rule() {
+                        let mut field_inner = field_pair.into_inner();
+                        let field_name = field_inner.next().unwrap().as_str().to_string();
 
-            // 残りの要素は field ルール
-            for field_pair in inner {
-                if let Rule::field = field_pair.as_rule() {
-                    let mut field_inner = field_pair.into_inner();
-                    let field_name = field_inner.next().unwrap().as_str().to_string();
-                    let type_str = field_inner.next().unwrap().as_str();
+                        // type_ref を取得
+                        let type_ref_pair =
+                            field_inner.next().unwrap().into_inner().next().unwrap();
 
-                    let field_type = match type_str {
-                        "float" => PrimitiveType::Float,
-                        "int" => PrimitiveType::Int,
-                        "bool" => PrimitiveType::Bool,
-                        "string" => PrimitiveType::String,
-                        _ => unreachable!("Grammar prevents this"),
-                    };
+                        let field_type = parse_type(type_ref_pair);
 
-                    fields.push(Field {
-                        name: field_name,
-                        field_type,
-                    });
+                        fields.push(Field {
+                            name: field_name,
+                            field_type,
+                            attributes: Vec::new(),
+                        });
+                    }
                 }
+
+                parsed_objects.push(ObjectDef {
+                    name: table_name,
+                    fields,
+                    is_struct: false,
+                    attributes: Vec::new(),
+                });
             }
-            parsed_tables.push(Table {
-                name: table_name,
-                fields,
-            });
+            Rule::enum_def => {
+                let mut inner = record.into_inner();
+                let enum_name = inner.next().unwrap().as_str().to_string();
+                let type_str = inner.next().unwrap().as_str();
+
+                let base_type = match type_str {
+                    "float" => PrimitiveType::Float,
+                    "int" => PrimitiveType::Int,
+                    "bool" => PrimitiveType::Bool,
+                    "string" => PrimitiveType::String,
+                    "byte" => PrimitiveType::Byte,
+                    _ => unreachable!("Grammar prevents this"),
+                };
+
+                let variants_pair = inner.next().unwrap();
+                let mut variants = Vec::new();
+                let mut current_value: i64 = 0;
+
+                for variant in variants_pair.into_inner() {
+                    variants.push(EnumVal {
+                        name: variant.as_str().to_string(),
+                        value: current_value,
+                    });
+                    current_value += 1;
+                }
+
+                parsed_enums.push(EnumDef {
+                    name: enum_name,
+                    base_type,
+                    variants,
+                    attributes: Vec::new(),
+                });
+            }
+            _ => {} // EOI などは無視
         }
     }
 
     Ok(Schema {
-        tables: parsed_tables,
+        objects: parsed_objects,
+        enums: parsed_enums,
     })
 }

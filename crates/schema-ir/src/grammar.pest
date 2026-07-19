@@ -3,14 +3,21 @@ COMMENT    = _{ "//" ~ (!NEWLINE ~ ANY)* }
 
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
-primitive_type = { "float" | "int" | "bool" | "string" }
+primitive_type = { "float" | "int" | "bool" | "string" | "byte" }
+custom_type = { ident }
 
-field = { ident ~ ":" ~ primitive_type ~ ";" }
+type_ref = { vector_type | primitive_type | custom_type }
+
+field = { ident ~ ":" ~ type_ref ~ ";" }
 
 table_def = { "table" ~ ident ~ "{" ~ field* ~ "}" }
 
 enum_variant = { ident }
 enum_variants = { enum_variant ~ ("," ~ enum_variant)* ~ ","? }
 enum_def = { "enum" ~ ident ~ ":" ~ primitive_type ~ "{" ~ enum_variants ~ "}" }
+
+// FlatBuffersの仕様上、配列の中身は基本型かカスタム型（テーブル/Enum）になるため、
+// 二重配列 [[int]] などは直接許容しない設計にします。
+vector_type = { "[" ~ (primitive_type | custom_type) ~ "]" }
 
 file = { SOI ~ (table_def | enum_def)* ~ EOI }

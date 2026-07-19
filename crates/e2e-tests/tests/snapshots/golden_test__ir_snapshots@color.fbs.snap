@@ -1,0 +1,66 @@
+---
+source: crates/e2e-tests/tests/golden_test.rs
+expression: result
+input_file: crates/e2e-tests/tests/golden/input/color.fbs
+---
+Schema {
+    objects: [
+        ObjectDef {
+            name: "ColoredItem",
+            fields: [
+                Field {
+                    name: "name",
+                    field_type: Primitive(
+                        String,
+                    ),
+                    attributes: [],
+                },
+                Field {
+                    name: "color",
+                    field_type: Obj(
+                        "Color",
+                    ),
+                    attributes: [],
+                },
+            ],
+            is_struct: false,
+            attributes: [],
+        },
+    ],
+    enums: [
+        EnumDef {
+            name: "Color",
+            base_type: Byte,
+            variants: [
+                EnumVal {
+                    name: "Red",
+                    value: 0,
+                },
+                EnumVal {
+                    name: "Green",
+                    value: 1,
+                },
+                EnumVal {
+                    name: "Blue",
+                    value: 2,
+                },
+            ],
+            attributes: [],
+        },
+        EnumDef {
+            name: "Status",
+            base_type: Byte,
+            variants: [
+                EnumVal {
+                    name: "Active",
+                    value: 0,
+                },
+                EnumVal {
+                    name: "Inactive",
+                    value: 1,
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}
