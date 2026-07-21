@@ -1,0 +1,11 @@
+enum Color : byte {
+    Red,
+    Green,
+    Blue
+}
+
+table Monster {
+    hp: int;
+    mana: int;
+    name: string;
+}

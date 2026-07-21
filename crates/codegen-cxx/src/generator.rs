@@ -1,4 +1,5 @@
-use schema_ir::{EnumDef, ObjectDef, PrimitiveType, Schema};
+use schema_ir::{EnumDef, ObjectDef, PrimitiveType, Schema, TypeRef};
+use std::fmt::Write;
 
 pub fn generate_cxx(schema: &Schema) -> String {
     let mut out = String::new();
@@ -9,46 +10,92 @@ pub fn generate_cxx(schema: &Schema) -> String {
     out.push_str("#include <vector>\n\n");
 
     for enum_def in &schema.enums {
-        // 変数 enum_def の参照を渡す
         out.push_str(&generate_enum(enum_def));
-        out.push_str("\n");
+        out.push('\n');
     }
 
     for object_def in &schema.objects {
         out.push_str(&generate_object(object_def));
-        out.push_str("\n");
+        out.push('\n');
     }
 
     out
 }
 
-fn generate_enum(enum_def: &EnumDef) -> String {
+pub fn generate_enum(enum_def: &EnumDef) -> String {
     let mut s = String::new();
 
-    let underlying_type = match enum_def.base_type {
-        PrimitiveType::Byte => "int8_t",
-        PrimitiveType::Int => "int32_t",
-        PrimitiveType::Bool => "bool",
-        PrimitiveType::Float => "float",
-        PrimitiveType::String => "int32_t",
+    let base_type_str = match enum_def.base_type {
+        schema_ir::PrimitiveType::Bool => "bool",
+        schema_ir::PrimitiveType::Byte => "int8_t",
+        schema_ir::PrimitiveType::Int => "int32_t",
+        schema_ir::PrimitiveType::Float => "float",
+        schema_ir::PrimitiveType::String => "std::string", // Enumのベースに文字列は通常使えませんがコンパイルを通すため
     };
 
-    s.push_str(&format!(
-        "enum class {} : {} {{\n",
-        enum_def.name, underlying_type
-    ));
+    writeln!(
+        &mut s,
+        "enum class {} : {} {{",
+        enum_def.name, base_type_str
+    )
+    .unwrap();
 
     for variant in &enum_def.variants {
-        s.push_str(&format!("    {} = {},\n", variant.name, variant.value));
+        writeln!(&mut s, "    {} = {},", variant.name, variant.value).unwrap();
     }
 
-    s.push_str("};\n");
+    // 4. 閉じ括弧
+    writeln!(&mut s, "}};").unwrap();
 
     s
 }
 
-// （参考）generate_object もダミーを用意しておくとコンパイルが通ります
-fn generate_object(object_def: &ObjectDef) -> String {
+pub fn generate_object(object_def: &ObjectDef) -> String {
     let mut s = String::new();
+
+    writeln!(&mut s, "struct {} {{", object_def.name).unwrap();
+
+    for field in &object_def.fields {
+        let cpp_type = to_cpp_type(&field.field_type);
+        writeln!(&mut s, "    {} {};", cpp_type, field.name).unwrap();
+    }
+
+    writeln!(&mut s, "}};").unwrap();
+
+    s
+}
+
+fn to_cpp_type(type_ref: &TypeRef) -> String {
+    match type_ref {
+        TypeRef::Primitive(PrimitiveType::Bool) => "bool".to_string(),
+        TypeRef::Primitive(PrimitiveType::Byte) => "int8_t".to_string(),
+        TypeRef::Primitive(PrimitiveType::Int) => "int32_t".to_string(),
+        TypeRef::Primitive(PrimitiveType::Float) => "float".to_string(),
+        TypeRef::Primitive(PrimitiveType::String) => "std::string".to_string(),
+
+        TypeRef::Obj(name) => name.clone(),
+
+        TypeRef::Vector(inner) => format!("std::vector<{}>", to_cpp_type(inner)),
+    }
+}
+
+pub fn generate_schema(schema: &Schema) -> String {
+    let mut s = String::new();
+
+    s.push_str("#pragma once\n\n");
+    s.push_str("#include <cstdint>\n");
+    s.push_str("#include <string>\n");
+    s.push_str("#include <vector>\n\n");
+
+    for enum_def in &schema.enums {
+        s.push_str(&generate_enum(enum_def));
+        s.push('\n');
+    }
+
+    for obj_def in &schema.objects {
+        s.push_str(&generate_object(obj_def));
+        s.push('\n');
+    }
+
     s
 }
