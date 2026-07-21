@@ -12,7 +12,10 @@ field = { ident ~ ":" ~ type_ref ~ ";" }
 
 table_def = { "table" ~ ident ~ "{" ~ field* ~ "}" }
 
-enum_variant = { ident }
+struct_def = { "struct" ~ ident ~ "{" ~ field* ~ "}" }
+
+integer = @{ "-"? ~ ASCII_DIGIT+ }
+enum_variant = { ident ~ ("=" ~ integer)? }
 enum_variants = { enum_variant ~ ("," ~ enum_variant)* ~ ","? }
 enum_def = { "enum" ~ ident ~ ":" ~ primitive_type ~ "{" ~ enum_variants ~ "}" }
 
@@ -20,4 +23,4 @@ enum_def = { "enum" ~ ident ~ ":" ~ primitive_type ~ "{" ~ enum_variants ~ "}" }
 // 二重配列 [[int]] などは直接許容しない設計にします。
 vector_type = { "[" ~ (primitive_type | custom_type) ~ "]" }
 
-file = { SOI ~ (table_def | enum_def)* ~ EOI }
+file = { SOI ~ (table_def | struct_def | enum_def)* ~ EOI }

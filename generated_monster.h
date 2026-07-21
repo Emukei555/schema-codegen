@@ -5,14 +5,20 @@
 #include <vector>
 
 enum class Color : int8_t {
-    Red = 0,
-    Green = 1,
-    Blue = 2,
+    Red = 10,
+    Green = 11,
+    Blue = -5,
 };
 
 struct Monster {
     int32_t hp;
     int32_t mana;
     std::string name;
+};
+
+struct Vec3 {
+    float x;
+    float y;
+    float z;
 };
 

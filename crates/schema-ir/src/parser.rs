@@ -37,9 +37,11 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
 
     for record in file_inner {
         match record.as_rule() {
-            Rule::table_def => {
+            Rule::table_def | Rule::struct_def => {
+                let is_struct = record.as_rule() == Rule::struct_def;
+
                 let mut inner = record.into_inner();
-                let table_name = inner.next().unwrap().as_str().to_string();
+                let obj_name = inner.next().unwrap().as_str().to_string();
                 let mut fields = Vec::new();
 
                 for field_pair in inner {
@@ -47,7 +49,6 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
                         let mut field_inner = field_pair.into_inner();
                         let field_name = field_inner.next().unwrap().as_str().to_string();
 
-                        // type_ref を取得
                         let type_ref_pair =
                             field_inner.next().unwrap().into_inner().next().unwrap();
 
@@ -62,9 +63,9 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
                 }
 
                 parsed_objects.push(ObjectDef {
-                    name: table_name,
+                    name: obj_name,
                     fields,
-                    is_struct: false,
+                    is_struct, // struct_def だった場合は true になる
                     attributes: Vec::new(),
                 });
             }
@@ -85,11 +86,22 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
                 let variants_pair = inner.next().unwrap();
                 let mut variants = Vec::new();
 
-                for (current_value, variant) in (0_i64..).zip(variants_pair.into_inner()) {
+                let mut next_value: i64 = 0;
+
+                for variant_pair in variants_pair.into_inner() {
+                    let mut variant_inner = variant_pair.into_inner();
+                    let variant_name = variant_inner.next().unwrap().as_str().to_string();
+
+                    if let Some(int_pair) = variant_inner.next() {
+                        next_value = int_pair.as_str().parse::<i64>().unwrap();
+                    }
+
                     variants.push(EnumVal {
-                        name: variant.as_str().to_string(),
-                        value: current_value,
+                        name: variant_name,
+                        value: next_value,
                     });
+
+                    next_value += 1;
                 }
 
                 parsed_enums.push(EnumDef {
