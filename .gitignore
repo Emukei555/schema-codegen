@@ -23,6 +23,7 @@ Thumbs.db
 
 # --- 生成物(このツール自体が吐き出すコード) ---
 /generated/
+examples/generated_*
 
 # insta
 *.snap.new
