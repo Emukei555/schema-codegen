@@ -7,16 +7,18 @@ pub enum Color {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Monster {
-    pub hp: i32,
-    pub mana: i32,
-    pub name: String,
-}
-
-#[derive(Debug, Clone, PartialEq)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
     pub z: f32,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Monster {
+    pub hp: i32,
+    pub mana: i32,
+    pub name: String,
+    pub pos: Vec3,
+    pub color: Color,
 }
 

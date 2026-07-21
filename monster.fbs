@@ -1,17 +1,15 @@
-enum Color : byte {
-    Red = 10,
-    Green,
-    Blue = -5
+enum Color : byte { Red = 10, Green, Blue = -5 }
+
+struct Vec3 {
+    x: float;
+    y: float;
+    z: float;
 }
 
 table Monster {
     hp: int;
     mana: int;
     name: string;
-}
-
-struct Vec3 {
-    x: float;
-    y: float;
-    z: float;
+    pos: Vec3;
+    color: Color;
 }
