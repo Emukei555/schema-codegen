@@ -6,7 +6,9 @@ ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 primitive_type = { "float" | "int" | "bool" | "string" | "byte" }
 custom_type = { ident }
 
-type_ref = { vector_type | primitive_type | custom_type }
+array_type = { "[" ~ type_ref ~ "]" }
+
+type_ref = { vector_type | primitive_type | custom_type | array_type}
 
 field = { ident ~ ":" ~ type_ref ~ ";" }
 

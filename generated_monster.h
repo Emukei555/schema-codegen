@@ -22,5 +22,7 @@ struct Monster {
     std::string name;
     Vec3 pos;
     Color color;
+    std::vector<int8_t> inventory;
+    std::vector<std::string> weapons;
 };
 

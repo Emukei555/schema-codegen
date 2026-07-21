@@ -65,7 +65,7 @@ pub fn parse_fbs(input: &str) -> Result<Schema, Box<dyn std::error::Error>> {
                 parsed_objects.push(ObjectDef {
                     name: obj_name,
                     fields,
-                    is_struct, // struct_def だった場合は true になる
+                    is_struct,
                     attributes: Vec::new(),
                 });
             }

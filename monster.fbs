@@ -12,4 +12,6 @@ table Monster {
     name: string;
     pos: Vec3;
     color: Color;
+    inventory: [byte];
+    weapons: [string];
 }

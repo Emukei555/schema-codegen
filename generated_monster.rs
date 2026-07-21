@@ -20,5 +20,7 @@ pub struct Monster {
     pub name: String,
     pub pos: Vec3,
     pub color: Color,
+    pub inventory: Vec<i8>,
+    pub weapons: Vec<String>,
 }
 
