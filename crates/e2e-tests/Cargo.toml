@@ -10,6 +10,7 @@ description.workspace = true
 publish = false
 
 [dependencies]
+serde_json.workspace = true
 
 [dev-dependencies]
 schema-ir = { path = "../schema-ir" }

@@ -7,12 +7,11 @@ readme = "README.md"
 license = { text = "MIT OR Apache-2.0" }
 dependencies = []
 
-# 用途を3つに限定(スキーマ検証プロトタイプ / IRデバッグ可視化 / ビルドオーケストレーション)。
-# GUIやWebフレームワーク系の依存はスコープ外として意図的に入れていない。
 [project.optional-dependencies]
 dev = [
-    "nox>=2024.4.15",   # クロスプラットフォームなタスクランナー(.bat後継)
+    "nox>=2024.4.15",
     "pytest>=8.0",
+    "graphviz>=0.20.1",
 ]
 
 [build-system]

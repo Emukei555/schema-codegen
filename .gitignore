@@ -3,7 +3,6 @@
 **/target/
 # Cargo.lock
 # Still considering whether to distribute it as a standalone executable binary
-# Currently intended as a library
 
 # --- Python ---
 python/.venv/
@@ -21,7 +20,7 @@ python/build/
 .DS_Store
 Thumbs.db
 
-# --- 生成物(このツール自体が吐き出すコード) ---
+# --- Products ---
 /generated/
 examples/generated_*
 

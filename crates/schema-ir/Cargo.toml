@@ -11,7 +11,7 @@ name = "schema_ir"
 path = "src/lib.rs"
 
 [dependencies]
-serde.workspace = true
+serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 thiserror.workspace = true
 flatbuffers.workspace = true

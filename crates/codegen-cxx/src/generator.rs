@@ -30,7 +30,7 @@ pub fn generate_enum(enum_def: &EnumDef) -> String {
         schema_ir::PrimitiveType::Byte => "int8_t",
         schema_ir::PrimitiveType::Int => "int32_t",
         schema_ir::PrimitiveType::Float => "float",
-        schema_ir::PrimitiveType::String => "std::string", // Enumのベースに文字列は通常使えませんがコンパイルを通すため
+        schema_ir::PrimitiveType::String => "std::string",
     };
 
     writeln!(
@@ -44,7 +44,6 @@ pub fn generate_enum(enum_def: &EnumDef) -> String {
         writeln!(&mut s, "    {} = {},", variant.name, variant.value).unwrap();
     }
 
-    // 4. 閉じ括弧
     writeln!(&mut s, "}};").unwrap();
 
     s

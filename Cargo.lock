@@ -283,6 +283,7 @@ version = "0.1.0"
 dependencies = [
  "insta",
  "schema-ir",
+ "serde_json",
 ]
 
 [[package]]
